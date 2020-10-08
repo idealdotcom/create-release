@@ -1,6 +1,7 @@
 const core = require('@actions/core');
 const { GitHub, context } = require('@actions/github');
 const fs = require('fs');
+const JiraClient = require("jira-connector");
 
 const MAX_SUB_VERSION = 100;
 async function getCurrentRelease(github, owner, repo, tag, version = 0) {
@@ -90,6 +91,28 @@ async function run() {
 
     console.log(`End result: `, createReleaseResponse);
 
+    const _body_fields = {
+      "fields" : {
+          "Fix Versions" : {"Set" : createReleaseResponse.releaseTagName}
+      }
+    }
+    try {
+    const jira = new JiraClient({
+        host: "idealcandidate.atlassian.net",
+          basic_auth: {
+            username: process.env.JIRA_USERNAME,
+            password: process.env.JIRA_PASSWORD
+          }
+      })
+
+    const issue = await jira.issue.getIssue({ issueKey: "ICWEB-8251"})
+
+    console.log(issue.fields.summary);
+    await issue.getEditMetadata({_body_fields})
+    }
+    catch(err) {
+      console.log('there was an error:', err)
+    }
     // Get the ID, html_url, and upload URL for the created Release from the response
     const {
       data: { id: releaseId, html_url: htmlUrl, upload_url: uploadUrl, tag_name: releaseTagName }
