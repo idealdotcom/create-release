@@ -25,6 +25,8 @@ async function run() {
 
     // Get the inputs from the workflow file: https://github.com/actions/toolkit/tree/master/packages/core#inputsoutputs
     const tagName = core.getInput('tag_name', { required: true });
+    const JIRA_USERNAME = core.getInput('jira_username', { required: true });
+    const JIRA_PASSWORD = core.getInput('jira_password', { required: true });
 
     // This removes the 'refs/tags' portion of the string, i.e. from 'refs/tags/v1.10.15' to 'v1.10.15'
     const tag = tagName.replace('refs/tags/', '');
@@ -102,8 +104,8 @@ async function run() {
       const config_jira = {
         host: "idealcandidate.atlassian.net",
           basic_auth: {
-            username: process.env.JIRA_USERNAME,
-            password: process.env.JIRA_PASSWORD
+            username: JIRA_USERNAME,
+            password: JIRA_PASSWORD
           }
       }
       console.log('is Username there?', config_jira.basic_auth.username)
