@@ -96,7 +96,9 @@ async function run() {
           "Fix Versions" : {"Set" : createReleaseResponse.releaseTagName}
       }
     }
+
     try {
+    console.log('starting jira config')
     const jira = new JiraClient({
         host: "idealcandidate.atlassian.net",
           basic_auth: {
@@ -104,11 +106,11 @@ async function run() {
             password: process.env.JIRA_PASSWORD
           }
       })
-
-    const issue = await jira.issue.getIssue({ issueKey: "ICWEB-8251"})
-
-    console.log(issue.fields.summary);
-    await issue.getEditMetadata({_body_fields})
+      console.log('create a jira connector', )
+      const issue = await jira.issue.getIssue({ issueKey: "ICWEB-8251"})
+      console.log('did something came?', issue);
+      await issue.getEditMetadata({_body_fields})
+      console.log('Eddit issue', issue);
     }
     catch(err) {
       console.log('there was an error:', err)
