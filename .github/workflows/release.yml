@@ -15,7 +15,7 @@ jobs:
         run: echo "current_release=$(<env/CURRENT_RELEASE)" >> $GITHUB_ENV
 
       - name: Get version
-        run: echo 'The selected version is' $current_release
+        run: echo 'The  selected version is' $current_release
 
       - name: Create Release
         id: create_release
