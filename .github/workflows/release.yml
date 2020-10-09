@@ -19,7 +19,7 @@ jobs:
 
       - name: Create Release
         id: create_release
-        uses: idealdotcom/create-release@main 
+        uses: idealdotcom/create-release@irlatest_v2 
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           release: ${current_release}
@@ -28,6 +28,8 @@ jobs:
           release_name: v${{ env.current_release }}
           draft: false
           prerelease: false
+          jira_username: ${{ secrets.JIRA_USERNAME }}
+          jira_password: ${{ secrets.JIRA_PASSWORD }}
 
       - name: Get release again
         run: |
