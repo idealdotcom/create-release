@@ -57135,19 +57135,21 @@ async function run() {
     }
 
     try {
-    console.log('starting jira config')
-    const jira = new JiraClient({
+      console.log('starting jira config')
+      const config_jira = {
         host: "idealcandidate.atlassian.net",
           basic_auth: {
             username: process.env.JIRA_USERNAME,
             password: process.env.JIRA_PASSWORD
           }
-      })
+      }
+      console.log('is Username there?', config_jira.basic_auth.username)
+      const jira = new JiraClient(config_jira)
       console.log('create a jira connector', )
       const issue = await jira.issue.getIssue({ issueKey: "ICWEB-8251"})
       console.log('did something came?', issue);
       await issue.getEditMetadata({_body_fields})
-      console.log('Eddit issue', issue);
+      console.log('Edit issue', issue);
     }
     catch(err) {
       console.log('there was an error:', err)
