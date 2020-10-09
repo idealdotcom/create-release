@@ -14,10 +14,6 @@ jobs:
       - name: get release
         run: echo "current_release=$(<env/CURRENT_RELEASE)" >> $GITHUB_ENV
 
-      - name: if jira secrete is set up
-        if: ${{ secrets.JIRA_USERNAME }}
-        run: echo " user name is set"
-
       - name: Get version
         run: echo 'The selected version is' $current_release
 
