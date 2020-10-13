@@ -108,9 +108,8 @@ async function run() {
             password: JIRA_PASSWORD
           }
       }
-      console.log('is Username there?', config_jira.basic_auth.username)
       const jira = new JiraClient(config_jira)
-      console.log('create a jira connector', )
+
       const issue = await jira.issue.getIssue({ issueKey: "ICWEB-8251"})
       console.log('did something came?', issue);
       await issue.getEditMetadata({_body_fields})
