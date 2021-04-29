@@ -1,6 +1,7 @@
 const core = require('@actions/core');
 const { GitHub, context } = require('@actions/github');
 const fs = require('fs');
+const JiraClient = require("jira-connector");
 
 const MAX_SUB_VERSION = 100;
 async function getCurrentRelease(github, owner, repo, tag, version = 0) {
@@ -24,6 +25,8 @@ async function run() {
 
     // Get the inputs from the workflow file: https://github.com/actions/toolkit/tree/master/packages/core#inputsoutputs
     const tagName = core.getInput('tag_name', { required: true });
+    const JIRA_USERNAME = core.getInput('jira_username', { required: true });
+    const JIRA_PASSWORD = core.getInput('jira_password', { required: true });
 
     // This removes the 'refs/tags' portion of the string, i.e. from 'refs/tags/v1.10.15' to 'v1.10.15'
     const tag = tagName.replace('refs/tags/', '');
@@ -90,6 +93,31 @@ async function run() {
 
     console.log(`End result: `, createReleaseResponse);
 
+    const _body_fields = {
+      "fields" : {
+          "Fix Versions" : {"Set" : createReleaseResponse.releaseTagName}
+      }
+    }
+
+    try {
+      console.log('starting jira config')
+      const config_jira = {
+        host: "idealcandidate.atlassian.net",
+          basic_auth: {
+            username: JIRA_USERNAME,
+            password: JIRA_PASSWORD
+          }
+      }
+      const jira = new JiraClient(config_jira)
+
+      const issue = await jira.issue.getIssue({ issueKey: "ICWEB-8251"})
+      console.log('did something came?', issue);
+      await issue.getEditMetadata({_body_fields})
+      console.log('Edit issue', issue);
+    }
+    catch(err) {
+      console.log('there was an error:', err)
+    }
     // Get the ID, html_url, and upload URL for the created Release from the response
     const {
       data: { id: releaseId, html_url: htmlUrl, upload_url: uploadUrl, tag_name: releaseTagName }
